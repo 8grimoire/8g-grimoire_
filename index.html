@@ -12,7 +12,50 @@ body {
   background: radial-gradient(circle, #14001f, #000);
   color: white;
 }
+/* ✨ ANIMASI JUDUL */
+h1 {
+  animation: glow 2s infinite alternate;
+}
 
+@keyframes glow {
+  from { text-shadow: 0 0 10px purple; }
+  to { text-shadow: 0 0 25px violet; }
+}
+
+/* 🌌 BINTANG GERAK */
+body::before {
+  animation: moveStars 60s linear infinite;
+}
+
+@keyframes moveStars {
+  from { background-position: 0 0; }
+  to { background-position: 1000px 1000px; }
+}
+
+/* 🔮 CARD GLOW */
+.card {
+  transition: 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 0 15px purple;
+}
+
+/* 🪄 EFEK SENTUH (HP) */
+.card:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 25px violet;
+}
+
+/* 📜 MODAL FADE */
+.modal {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 /* Background magic (AMAN) */
 body::before {
   content: "";
@@ -175,12 +218,17 @@ function renderList(data) {
 
 // MODAL
 function openModal(nama, umur, hobi, cita) {
-  document.getElementById("modal").style.display = "block";
+  let modal = document.getElementById("modal");
+  modal.style.display = "block";
+
+  // efek glow pas buka
+  modal.style.boxShadow = "0 0 50px purple";
+
   document.getElementById("nama").innerText = nama;
   document.getElementById("umur").innerText = umur;
   document.getElementById("hobi").innerText = hobi;
   document.getElementById("cita").innerText = cita;
-}
+ } 
 
 function closeModal() {
   document.getElementById("modal").style.display = "none";
