@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8G Grimoire</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle, #14001f, #000);
+  color: white;
+}
+
+/* Background magic (AMAN) */
+body::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('https://i.ibb.co/6yZQG6F/stars.png');
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.container {
+  padding: 15px;
+  max-width: 500px;
+  margin: auto;
+}
+
+/* TITLE */
+h1 {
+  text-align: center;
+  color: #d580ff;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #caa6ff;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+/* SEARCH */
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 15px;
+  border: none;
+  margin-bottom: 15px;
+}
+
+/* CARD */
+.card {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 15px;
+  border: 1px solid purple;
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:active {
+  transform: scale(0.96);
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: #0a0014;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.close {
+  color: red;
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🔮 8G GRIMOIRE</h1>
+  <p class="subtitle">The Book of Students</p>
+
+  <input type="text" id="search" placeholder="Cari nama..." onkeyup="searchName()">
+
+  <div id="list"></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <div class="close" onclick="closeModal()">⬅ Kembali</div>
+    <h2 id="nama"></h2>
+    <p>🧙 Umur: <span id="umur"></span></p>
+    <p>🎯 Hobi: <span id="hobi"></span></p>
+    <p>✨ Cita-cita: <span id="cita"></span></p>
+  </div>
+</div>
+
+<script>
+
+// DATA 40 SISWA (AMAN)
+let siswa = [
+{nama:"Adit Andhika Septiawan", umur:14, hobi:"Game", cita:"Programmer"},
+{nama:"Agny Mai Amirat", umur:14, hobi:"Nonton", cita:"Dokter"},
+{nama:"Alikha Zifara Maharani", umur:14, hobi:"Membaca", cita:"Guru"},
+{nama:"Alman Almaulana Putra", umur:14, hobi:"Futsal", cita:"Atlet"},
+{nama:"Annisa Rania Putri", umur:14, hobi:"Menulis", cita:"Penulis"},
+{nama:"Arya Ghaussan Ghaillan", umur:14, hobi:"Game", cita:"Tentara"},
+{nama:"Asyifa Eka Faradilla", umur:14, hobi:"Musik", cita:"Penyanyi"},
+{nama:"Ayu Rahmawati", umur:14, hobi:"Masak", cita:"Chef"},
+{nama:"Azzahra Nurfiqriyah", umur:14, hobi:"Menggambar", cita:"Desainer"},
+{nama:"Edelweis Alfathiah Nurislami", umur:14, hobi:"Membaca", cita:"Guru"},
+{nama:"Fadly Syahbani", umur:14, hobi:"Futsal", cita:"Atlet"},
+{nama:"Fajar Agya Ilham", umur:14, hobi:"Game", cita:"Programmer"},
+{nama:"Fathimah Az Zahra Irawan", umur:14, hobi:"Menulis", cita:"Penulis"},
+{nama:"Frans Jerrykho Nababan", umur:14, hobi:"Basket", cita:"Atlet"},
+{nama:"Gepin Azka", umur:14, hobi:"Game", cita:"Streamer"},
+{nama:"Giovano Putra Firizqi", umur:14, hobi:"Sepak bola", cita:"Atlet"},
+{nama:"Ilham Putra Maulana", umur:14, hobi:"Game", cita:"Programmer"},
+{nama:"Jaka Aditya Putra", umur:14, hobi:"Motor", cita:"Mekanik"},
+{nama:"Kelvin Nugraha", umur:14, hobi:"Game", cita:"Pro Player"},
+{nama:"Khairul Rizal", umur:14, hobi:"Sepak bola", cita:"Atlet"},
+{nama:"Laisya Zakiyatul Muna", umur:14, hobi:"Membaca", cita:"Dokter"},
+{nama:"Lusy Gustin Adiyansyah", umur:14, hobi:"Musik", cita:"Penyanyi"},
+{nama:"Meysa Azizah", umur:14, hobi:"Menari", cita:"Penari"},
+{nama:"Muhamad Daffa Khalihur Rahman", umur:14, hobi:"Game", cita:"Programmer"},
+{nama:"Muhamad Faeyza Anwar", umur:14, hobi:"Sepak bola", cita:"Atlet"},
+{nama:"Muhamad Rafka Pratama", umur:14, hobi:"Game", cita:"Streamer"},
+{nama:"Muhamad Revan Maulana", umur:14, hobi:"Game", cita:"Pro Player"},
+{nama:"Naaimah Qothrunnadaa", umur:14, hobi:"Membaca", cita:"Guru"},
+{nama:"Nayla Almira Pahradia", umur:14, hobi:"Menggambar", cita:"Desainer"},
+{nama:"Nur Cinta Oktaviany", umur:14, hobi:"Menulis", cita:"Penulis"},
+{nama:"Putri Aira Sofwana Ulya", umur:14, hobi:"Masak", cita:"Chef"},
+{nama:"Repan Muhammad Repando", umur:14, hobi:"Game", cita:"Programmer"},
+{nama:"Revino Faiq Syauki", umur:14, hobi:"Futsal", cita:"Atlet"},
+{nama:"Rima Silviana", umur:14, hobi:"Membaca", cita:"Guru"},
+{nama:"Rina Rahayu", umur:14, hobi:"Masak", cita:"Chef"},
+{nama:"Selvina Anggraeni", umur:14, hobi:"Menari", cita:"Penari"},
+{nama:"Syaakira Kireinisa", umur:14, hobi:"Musik", cita:"Penyanyi"},
+{nama:"Yusbikha Faqih Saputra", umur:14, hobi:"Sepak bola", cita:"Atlet"},
+{nama:"Zhilvya Dwina A Zahra", umur:14, hobi:"Menggambar", cita:"Desainer"},
+{nama:"Zikra Achyar Nurlafi", umur:14, hobi:"Game", cita:"Programmer"}
+];
+
+// RENDER LIST
+function renderList(data) {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(s => {
+    list.innerHTML += `
+      <div class="card" onclick="openModal('${s.nama}','${s.umur}','${s.hobi}','${s.cita}')">
+        📖 ${s.nama}
+      </div>
+    `;
+  });
+}
+
+// MODAL
+function openModal(nama, umur, hobi, cita) {
+  document.getElementById("modal").style.display = "block";
+  document.getElementById("nama").innerText = nama;
+  document.getElementById("umur").innerText = umur;
+  document.getElementById("hobi").innerText = hobi;
+  document.getElementById("cita").innerText = cita;
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+// SEARCH
+function searchName() {
+  let input = document.getElementById("search").value.toLowerCase();
+  let filtered = siswa.filter(s => s.nama.toLowerCase().includes(input));
+  renderList(filtered);
+}
+
+// INIT (WAJIB)
+renderList(siswa);
+
+</script>
+
+</body>
+</html>
